@@ -2,7 +2,6 @@
 
 Démonstration de build multi-plateformes / archi : amd64 (x86) et arm64 (M1/M2, Rasberry, AWS Graviton), pour ne produire qu'une seule référence (**fastapi-multiarch**) d'image (OCI) contenant 2 manifests : 1 par type d'architecture.
 
-
 ## Prérequis 
 
 **Buildx**
@@ -12,11 +11,18 @@ $ docker buildx version
 github.com/docker/buildx v0.30.1-desktop.1 792b8327a475a5d8c9d5f4ea6ce866e7da39ae8b
 ```
 
+** Création d'un builder **
+
+```bash
+docker buildx rm multiarch-builder
+docker buildx create --name multiarch-builder --driver docker-container --config ./buildkitd.toml --use
+```
+
+Le **buildkitd.toml** permet au builder d'utiliser http (sans certificats TLS) sur le FQDN local et port 5000 du registry : **host.docker.internal**
+
 **Registry local**
 
 Pour plus de facilité, un registry local doit exister, pour le --push vers celui-ci lors du build de l'image multi-architectures
-
-Le buildkitd.toml permet d'utiliser http (sans certificats) sur le FQDN local / port 5000 du registry : host.docker.internal
 
 ```
 $ docker compose -f registry2.yml up -d
@@ -29,6 +35,8 @@ NB : il est possible de directement mettre dans le **daemon.json** des règles d
   "insecure-registries": ["host.docker.internal:5000", "localhost:5000"]
 }
 ```
+
+ou de créer un TLS auto-signé.
 
 ## Build multi-archi
 
