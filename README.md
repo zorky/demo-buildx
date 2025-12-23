@@ -141,6 +141,12 @@ architecture: "x86_64"
 
 ## Script de démo 
 
+Il déroulera les commandes docker pour builder, puller, et inspecter les images produites.
+
 ```bash
 $ ./multi-arch.sh
 ```
+
+![](captures/multi-arch-1.png)
+
+![](captures/multi-arch-2.png)
