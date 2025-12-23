@@ -1,6 +1,6 @@
 # Docker buildx
 
-Démonstration de build multi-plateformes / archi : amd64 (x86) et arm64 (M1/M2, Rasberry, AWS Graviton), pour ne produire qu'une seule référence (**fastapi-multiarch**) d'image OCI contenant 
+Démonstration de build multi-plateformes / archi : **amd64** (x86) et **arm64** (M1/M2, Rasberry, AWS Graviton), pour ne produire qu'une seule référence (**fastapi-multiarch**) d'image OCI contenant 
 
 - 1 manifest list qui référence 2 manifests correspondant à chacune des architectures de l'image
 - 1 manifest amd64 qui liste les layers correspondants à l'image AMD64
@@ -22,11 +22,13 @@ docker buildx rm multiarch-builder
 docker buildx create --name multiarch-builder --driver docker-container --config ./buildkitd.toml --use
 ```
 
-Le **buildkitd.toml** [](buildkitd.toml) permet au builder d'utiliser http (sans certificats TLS) sur le FQDN local et port 5000 du registry : **host.docker.internal**
+Le [buildkitd.toml](buildkitd.toml) permet au builder d'utiliser http (sans certificats TLS) sur le FQDN local et port 5000 du registry interne : **host.docker.internal**
 
 **Registry local**
 
 Pour plus de facilité, un registry local doit exister, pour le --push vers celui-ci lors du build de l'image multi-architectures
+
+Le [registry2.yml](registry2.yml) est le compose de ce registry, lancé avant le build pour pouvoir pusher.
 
 ```
 $ docker compose -f registry2.yml up -d
@@ -44,7 +46,7 @@ ou de créer un TLS auto-signé.
 
 ## Build multi-archi
 
-Crée une image fastapi sur pour 2 architecteurs.
+Crée une image fastapi sur pour 2 architecteurs simultanément.
 
 ```bash
 $ docker buildx build --platform linux/amd64,linux/arm64 \
@@ -85,10 +87,10 @@ exec /usr/local/bin/uvicorn: exec format error
 
 ## Inspection des manifests de l'image 
 
-Le manifest list indique 2 manifests :
+Le manifest list (sha256:71d4d973f0...) indique 2 manifests :
 
-- un pour l'amd64
-- un pour l'arm64
+- un pour l'amd64 (sha256:ba8d39b...)
+- un pour l'arm64 (sha256:b378412...)
 
 ```bash
  $ docker buildx imagetools inspect  host.docker.internal:5000/fastapi-multiarch:latest
