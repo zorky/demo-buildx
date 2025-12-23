@@ -28,7 +28,7 @@ Le [buildkitd.toml](buildkitd.toml) permet au builder d'utiliser http (sans cert
 
 Pour plus de facilité, un registry local doit exister, pour le --push vers celui-ci lors du build de l'image multi-architectures
 
-Le [registry2.yml](registry2.yml) est le compose de ce registry, lancé avant le build pour pouvoir pusher.
+Le [registry.yml](registry.yml) est le compose de ce registry, lancé avant le build pour pouvoir pusher.
 
 ```
 $ docker compose -f registry2.yml up -d
